@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, query, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, getDocs, updateDoc, doc, getDoc, setDoc, arrayUnion } from 'firebase/firestore'; // Added setDoc and arrayUnion
 import { auth, db } from '../Config/Config';
 
 const Deposits = () => {
@@ -20,6 +20,7 @@ const Deposits = () => {
                     lastName: doc.data().lastName || '',
                     status: doc.data().status || 'pending',
                     amount: doc.data().amount || 0, // Fetch amount
+                    uid: doc.data().uid || 0, // Fetch Uid
                     TotalAmount: doc.data().TotalAmount || 0 // Fetch TotalAmount
                 }));
 
@@ -52,15 +53,33 @@ const Deposits = () => {
             const depositDoc = await getDoc(depositRef);
 
             if (depositDoc.exists()) {
-                const { TotalAmount, amount } = depositDoc.data(); // Get current TotalAmount and amount
+                const { TotalAmount, amount, uid} = depositDoc.data(); // Get current TotalAmount, amount, and uid
                 const selectedStatus = deposits.find(deposit => deposit.id === id).status;
 
                 if (selectedStatus === 'approved') {
-                    // Ensure both values are treated as numbers
                     const newTotalAmount = Number(TotalAmount) + Number(amount); // Sum the values as numbers
+
+                    // Step 1: Create/Update the TransHistory document with the UID
+                    const transHistoryRef = doc(db, 'TransHistory', uid);
+                    await setDoc(transHistoryRef, {
+                        depositTrans: arrayUnion({
+                            date: new Date().toISOString(), // Add the current date
+                            amount: Number(amount), // Log the current amount being added
+            
+                        })
+                    }, { merge: true }); // Merge to avoid overwriting existing depositTrans
+
+                    //  // Fetch the TransHistory document to get updated depositTrans
+                    // const transHistoryDoc = await getDoc(transHistoryRef);
+                    // if (transHistoryDoc.exists()) {
+                    //     const transData = transHistoryDoc.data();
+                    //     console.log("depositTrans: ", transData.depositTrans); // Log the depositTrans array
+                    // }
+
+                    // Step 2: Update the deposits document
                     await updateDoc(depositRef, { 
                         TotalAmount: newTotalAmount, // Update TotalAmount with the sum
-                        amount: 0, // Set amount to 0
+                        amount: 0, // Set amount to 0 after adding to TransHistory
                         status: selectedStatus // Update status
                     });
                 } else if (selectedStatus === 'declined' || selectedStatus === 'pending') {

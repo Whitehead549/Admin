@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, query, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, getDocs, updateDoc, doc, arrayUnion, setDoc} from 'firebase/firestore';
 import { auth, db } from '../Config/Config';
 
 const Withdraw = () => {
@@ -20,7 +20,8 @@ const Withdraw = () => {
                     lastName: doc.data().lastName || '',
                     status: doc.data().status || 'pending',
                     Totalwithdraw: doc.data().Totalwithdraw || 0, // Assuming this field exists
-                    amountWithdraw: doc.data().amountWithdraw || 0 // Assuming this field exists
+                    amountWithdraw: doc.data().amountWithdraw || 0, // Assuming this field exists
+                    uid: doc.data().uid || 0, // Fetch Uid
                 }));
 
                 setWithdraws(withdrawsData);
@@ -49,12 +50,21 @@ const Withdraw = () => {
     const handleSubmit = async (id) => {
         try {
             const withdrawToUpdate = withdraws.find(withdraw => withdraw.id === id);
-            const { status, Totalwithdraw, amountWithdraw } = withdrawToUpdate;
+            const { status, Totalwithdraw, amountWithdraw, uid} = withdrawToUpdate;
 
             // Check the selected status
             if (status === "approved") {
                 // Calculate new Totalwithdraw
                 const newTotalwithdraw = Number(Totalwithdraw) + Number(amountWithdraw);
+
+                 // Step 1: Create/Update the TransHistory document with the UID
+                 const transHistoryRef = doc(db, 'TransHistory', uid);
+                 await setDoc(transHistoryRef, {
+                     withdrawlTrans: arrayUnion({
+                         date: new Date().toISOString(), // Add the current date
+                         amount: Number(amountWithdraw), // Log the current amount being added
+                     })
+                 }, { merge: true }); // Merge to avoid overwriting existing transactions
 
                 // Update Firestore
                 const withdrawRef = doc(db, 'withdraws', id);
