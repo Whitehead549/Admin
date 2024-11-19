@@ -5,14 +5,16 @@ import Home from './pages/Home';
 import Deposits from './pages/Deposits';
 import Timezone from './pages/Timezone';
 import Withdrawals from './pages/withdraws';
+import Registration from './pages/Registration';
 
 
 function App() {
   return (
     <Router>
       <Routes>
+       <Route index element={<Registration />} />
         <Route path="/" element={<DashboardLayout />}>
-          <Route index element={<Home />} />
+         <Route path="Dashboard" element={<Home />} />          
           <Route path="deposits" element={<Deposits />} />
           <Route path="timezone" element={<Timezone />} />
           <Route path="withdraws" element={<Withdrawals />} />
