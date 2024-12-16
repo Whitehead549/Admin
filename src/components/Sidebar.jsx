@@ -23,6 +23,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Navigation Links */}
       <nav className="mt-8">
         <ul>
+        <li>
+            <Link to="/users" className="flex items-center px-4 py-2 hover:bg-gray-700 font-semibold text-lg py-3" onClick={onClose}>
+              <FaUser className="mr-3" /> {/* Icon */}
+              Users
+            </Link>
+          </li>
           <li>
             <Link to="/Dashboard" className="flex items-center px-4 py-2 hover:bg-gray-700 font-semibold text-lg py-3" onClick={onClose}>
               <FaHome className="mr-3" /> {/* Icon */}
@@ -33,6 +39,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             <Link to="/deposits" className="flex items-center px-4 py-2 hover:bg-gray-700 font-semibold text-lg py-3" onClick={onClose}>
               <FaUser className="mr-3" /> {/* Icon */}
               Deposits
+            </Link>
+          </li>
+          <li>
+            <Link to="/hash" className="flex items-center px-4 py-2 hover:bg-gray-700 font-semibold text-lg py-3" onClick={onClose}>
+              < FaMoneyBillWave className="mr-3" /> {/* Icon */}
+              TransHash
             </Link>
           </li>
           <li>

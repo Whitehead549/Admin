@@ -6,6 +6,9 @@ import Deposits from './pages/Deposits';
 import Timezone from './pages/Timezone';
 import Withdrawals from './pages/withdraws';
 import Registration from './pages/Registration';
+import Users from './pages/Users';
+import TransHash from './pages/TransHash';
+
 
 
 function App() {
@@ -14,8 +17,10 @@ function App() {
       <Routes>
        <Route index element={<Registration />} />
         <Route path="/" element={<DashboardLayout />}>
-         <Route path="Dashboard" element={<Home />} />          
+          <Route path="users" element={<Users />} />
+          <Route path="Dashboard" element={<Home />} />          
           <Route path="deposits" element={<Deposits />} />
+          <Route path="hash" element={<TransHash />} />
           <Route path="timezone" element={<Timezone />} />
           <Route path="withdraws" element={<Withdrawals />} />
 
