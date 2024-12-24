@@ -44,7 +44,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <li>
             <Link to="/hash" className="flex items-center px-4 py-2 hover:bg-gray-700 font-semibold text-lg py-3" onClick={onClose}>
               < FaMoneyBillWave className="mr-3" /> {/* Icon */}
-              TransHash
+              ProofPayment
             </Link>
           </li>
           <li>
